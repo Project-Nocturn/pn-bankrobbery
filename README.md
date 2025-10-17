@@ -29,6 +29,11 @@
 4. Configure the settings in the config.lua file to your liking
 5. Restart your server
 
+
+
+# **GitHub Repository:** [pn-bankrobbery](https://github.com/ProjectNocturn/pn-bankrobbery)
+
+
 ## ⚠️ Important Notes
 - This resource replaces the default qb-bankrobbery - do not run both simultaneously
 - Requires minimum of 5 police online (configurable)
