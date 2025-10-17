@@ -50,11 +50,3 @@ The code you obtain here can be used, modified, and redistributed, provided that
 ## 🔗 Links
 - [Discord](https://discord.gg/GdmWXCfNnf)
 - [Original qb-bankrobbery](https://github.com/qbcore-framework/qb-bankrobbery)
-
-# pn-banjrobbery
-# pn-bankrobbery
-# pn-bankrobbery
-# pn-bankrobbery
-# pn-bankrobbery
-# pn-bankrobbery
-# pn-bankrobbery
