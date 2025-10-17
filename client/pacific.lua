@@ -39,6 +39,78 @@ end
 
 -- Events
 
+-- Fonction pour faire apparaître des gardes de différentes difficultés
+local function SpawnBankGuards(difficulty)
+    local guardModels = {
+        "s_m_m_security_01",
+        "s_m_m_fiboffice_02",
+        "s_m_y_swat_01"
+    }
+    
+    local weapons = {
+        easy = {"WEAPON_PISTOL", "WEAPON_COMBATPISTOL"},
+        medium = {"WEAPON_COMBATPISTOL", "WEAPON_SMG"},
+        hard = {"WEAPON_CARBINERIFLE", "WEAPON_PUMPSHOTGUN", "WEAPON_SMG"}
+    }
+    
+    -- Positions précises des gardes en vector4 (x, y, z, heading)
+    local guardPositions = {
+        vector4(256.05, 227.35, 101.68, 244.18),
+        vector4(263.19, 221.8, 101.68, 350.75),
+        vector4(257.49, 224.17, 101.88, 300.81)
+    }
+    
+    local numGuards = 0
+    local selectedWeapons = {}
+    local guardIndices = {}
+    
+    if difficulty == "easy" then
+        numGuards = 2
+        selectedWeapons = weapons.easy
+        guardIndices = {1, 2}
+        QBCore.Functions.Notify("Des gardes de sécurité sont arrivés!", "inform")
+    elseif difficulty == "medium" then
+        numGuards = 3
+        selectedWeapons = weapons.medium
+        guardIndices = {1, 3, 5}
+        QBCore.Functions.Notify("Des agents de sécurité armés sont arrivés!", "inform")
+    else -- hard
+        numGuards = 4
+        selectedWeapons = weapons.hard
+        guardIndices = {1, 2, 3, 4}
+        QBCore.Functions.Notify("Une équipe d'intervention lourdement armée est arrivée!", "error")
+    end
+    
+    for _, index in ipairs(guardIndices) do
+        local guardModel = guardModels[math.random(1, #guardModels)]
+        
+        RequestModel(GetHashKey(guardModel))
+        while not HasModelLoaded(GetHashKey(guardModel)) do
+            Wait(100)
+        end
+        
+        local guardPos = guardPositions[index]
+        local guard = CreatePed(4, GetHashKey(guardModel), guardPos.x, guardPos.y, guardPos.z, guardPos.w, true, true)
+        
+        -- Donner une arme aléatoire au garde
+        local weapon = selectedWeapons[math.random(1, #selectedWeapons)]
+        GiveWeaponToPed(guard, GetHashKey(weapon), 250, false, true)
+        
+        -- Configurer le comportement du garde
+        SetPedArmour(guard, difficulty == "hard" and 100 or (difficulty == "medium" and 50 or 0))
+        SetPedAccuracy(guard, difficulty == "hard" and 80 or (difficulty == "medium" and 60 or 40))
+        SetPedCombatAttributes(guard, 46, true)
+        SetPedCombatAttributes(guard, 0, true)
+        SetPedCombatAbility(guard, difficulty == "hard" and 2 or 1)
+        SetPedCombatMovement(guard, 2)
+        SetPedCombatRange(guard, 2)
+        SetPedKeepTask(guard, true)
+        
+        -- Faire attaquer le joueur
+        TaskCombatPed(guard, PlayerPedId(), 0, 16)
+    end
+end
+
 RegisterNetEvent('pn-bankrobbery:UseBankcardB', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
@@ -62,6 +134,12 @@ RegisterNetEvent('pn-bankrobbery:UseBankcardB', function()
                         StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
                         Config.DoorlockAction(1, false)
                         TriggerServerEvent('pn-bankrobbery:server:removeBankCard', '02')
+                        
+                        -- Faire apparaître des gardes avec une difficulté aléatoire
+                        local difficulties = {"easy", "medium", "hard"}
+                        local randomDifficulty = difficulties[math.random(1, #difficulties)]
+                        SpawnBankGuards(randomDifficulty)
+                        
                         if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end
                         TriggerServerEvent("pn-bankrobbery:server:callCops", "pacific", 0, pos)
                         copsCalled = true
@@ -102,7 +180,8 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                         }, {}, {}, {}, function() -- Done
                             TriggerServerEvent('pn-bankrobbery:server:removeElectronicKit')
                             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
-                            local success = exports['qb-minigames']:Hacking(5, 30) -- code block size & seconds to solve
+                            --local success = exports['qb-minigames']:Hacking(5, 30) -- code block size & seconds to solve
+                            local success = exports['glitch-minigames']:StartDataCrack(3)
                             if success then
                                 TriggerServerEvent('pn-bankrobbery:server:setBankState', 'pacific')
                             end
@@ -145,10 +224,10 @@ CreateThread(function()
             CreateThread(function()
                 while inBankCardBZone and not Config.BigBanks["pacific"]["isOpened"] do
                     local pos = GetEntityCoords(PlayerPedId())
-                    local doorPos = Config.BigBanks["pacific"]["coords"]
+                    local doorPos = Config.BigBanks["pacific"]["coords"][1]
                     local dist = #(pos - doorPos)
                     if dist < 10.0 then
-                        DrawText3D(doorPos.x, doorPos.y, doorPos.z + 1.0, "~y~Carte de sécurité B~w~ requise")
+                        DrawText3D(doorPos.x, doorPos.y, doorPos.z + 1.0, "~y~Carte de sécurité B~w~ requise", 0.4)
                     end
                     Wait(0)
                 end
@@ -169,10 +248,10 @@ CreateThread(function()
             CreateThread(function()
                 while inElectronickitZone and not Config.BigBanks["pacific"]["isOpened"] do
                     local pos = GetEntityCoords(PlayerPedId())
-                    local hackPos = Config.BigBanks["pacific"]["coords"]
+                    local hackPos = Config.BigBanks["pacific"]["coords"][2]
                     local dist = #(pos - hackPos)
                     if dist < 10.0 then
-                        DrawText3D(hackPos.x, hackPos.y, hackPos.z + 1.0, "~y~Kit électronique~w~ et ~y~Clé USB Trojan~w~ requis")
+                        DrawText3D(hackPos.x, hackPos.y, hackPos.z + 1.0, "~y~Kit électronique~w~ et ~y~Clé USB Trojan~w~ requis", 0.4)
                     end
                     Wait(0)
                 end
@@ -186,55 +265,6 @@ CreateThread(function()
         maxZ = Config.BigBanks["pacific"]["thermite"][1]["coords"].z + 1,
         debugPoly = false
     })
-    thermite1Zone:onPlayerInOut(function(inside)
-        if inside and not Config.BigBanks["pacific"]["thermite"][1]["isOpened"] then
-            currentThermiteGate = Config.BigBanks["pacific"]["thermite"][1]["doorId"]
-            -- Remplace ShowRequiredItems par un texte 3D
-            CreateThread(function()
-                while currentThermiteGate == Config.BigBanks["pacific"]["thermite"][1]["doorId"] do
-                    local pos = GetEntityCoords(PlayerPedId())
-                    local doorPos = Config.BigBanks["pacific"]["thermite"][1]["coords"]
-                    local dist = #(pos - doorPos)
-                    if dist < 10.0 then
-                        DrawText3D(doorPos.x, doorPos.y, doorPos.z + 0.5, "~y~Thermite~w~ requise")
-                    end
-                    Wait(0)
-                end
-            end)
-        else
-            if currentThermiteGate == Config.BigBanks["pacific"]["thermite"][1]["doorId"] then
-                currentThermiteGate = 0
-            end
-        end
-    end)
-    local thermite2Zone = BoxZone:Create(Config.BigBanks["pacific"]["thermite"][2]["coords"], 1.0, 1.0, {
-        name = 'pacific_coords_thermite_2',
-        heading = Config.BigBanks["pacific"]["heading"].closed,
-        minZ = Config.BigBanks["pacific"]["thermite"][2]["coords"].z - 1,
-        maxZ = Config.BigBanks["pacific"]["thermite"][2]["coords"].z + 1,
-        debugPoly = false
-    })
-    thermite2Zone:onPlayerInOut(function(inside)
-        if inside and not Config.BigBanks["pacific"]["thermite"][2]["isOpened"] then
-            currentThermiteGate = Config.BigBanks["pacific"]["thermite"][2]["doorId"]
-            -- Remplace ShowRequiredItems par un texte 3D
-            CreateThread(function()
-                while currentThermiteGate == Config.BigBanks["pacific"]["thermite"][2]["doorId"] do
-                    local pos = GetEntityCoords(PlayerPedId())
-                    local doorPos = Config.BigBanks["pacific"]["thermite"][2]["coords"]
-                    local dist = #(pos - doorPos)
-                    if dist < 10.0 then
-                        DrawText3D(doorPos.x, doorPos.y, doorPos.z + 0.5, "~y~Thermite~w~ requise")
-                    end
-                    Wait(0)
-                end
-            end)
-        else
-            if currentThermiteGate == Config.BigBanks["pacific"]["thermite"][2]["doorId"] then
-                currentThermiteGate = 0
-            end
-        end
-    end)
     for k in pairs(Config.BigBanks["pacific"]["lockers"]) do
         if Config.UseTarget then
             exports['qb-target']:AddBoxZone('pacific_coords_locker_'..k, Config.BigBanks["pacific"]["lockers"][k]["coords"], 1.0, 1.0, {

@@ -196,7 +196,7 @@ function openLocker(bankId, lockerId) -- Globally Used
             -- local DrillObject = CreateObject(`hei_prop_heist_drill`, pos.x, pos.y, pos.z, true, true, true)
             -- AttachEntityToEntity(DrillObject, ped, GetPedBoneIndex(ped, 57005), 0.14, 0, -0.01, 90.0, -90.0, 180.0, true, true, false, true, 1, true)
             
-            local success = exports['glitch-minigames']:StartDrilling()
+            local success = exports['glitch-minigames']:StartPlasmaDrilling(5)
             if success then
                 TaskPlayAnim(ped, 'anim@heists@fleeca_bank@drilling', 'drill_straight_idle', 3.0, 3.0, -1, 1, 0, false, false, false)
                 IsDrilling = true
