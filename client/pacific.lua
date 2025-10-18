@@ -9,6 +9,41 @@ local inElectronickitZone = false
 local currentLocker = 0
 local copsCalled = false
 
+-- Fonction pour faire apparaître un panneau piratable
+local function SpawnHackablePanel()
+    -- Coordonnées du panneau
+    local panelCoords = vector3(277.42, 232.70, 99.0)
+    
+    -- Modèle du panneau
+    local panelModel = "hei_prop_hei_securitypanel"
+    
+    -- Charger le modèle
+    RequestModel(GetHashKey(panelModel))
+    while not HasModelLoaded(GetHashKey(panelModel)) do
+        Wait(100)
+    end
+    
+    -- Créer le panneau
+    local panel = CreateObject(GetHashKey(panelModel), panelCoords.x, panelCoords.y, panelCoords.z, true, false, false)
+    
+    -- Orienter le panneau (heading 340.0)
+    SetEntityHeading(panel, 115.06)
+    
+    -- Fixer le panneau pour qu'il ne bouge pas
+    FreezeEntityPosition(panel, true)
+    
+    -- Rendre le panneau persistant
+    SetEntityAsMissionEntity(panel, true, true)
+    
+    return panel
+end
+
+-- Créer le panneau piratable au démarrage du script
+CreateThread(function()
+    Wait(1000) -- Attendre que le monde soit chargé
+    local hackablePanel = SpawnHackablePanel()
+end)
+
 -- Fonction pour afficher du texte 3D dans le monde
 function DrawText3D(x, y, z, text, scale)
     local onScreen, _x, _y = World3dToScreen2d(x, y, z)
@@ -39,25 +74,26 @@ end
 
 -- Events
 
--- Fonction pour faire apparaître des gardes de différentes difficultés
-local function SpawnBankGuards(difficulty)
+-- Fonction pour faire apparaître des gardes de banque avec différentes difficultés
+function SpawnBankGuards(difficulty)
     local guardModels = {
-        "s_m_m_security_01",
-        "s_m_m_fiboffice_02",
-        "s_m_y_swat_01"
+        "s_m_m_armoured_01",
+        "s_m_m_armoured_02",
+        "s_m_m_chemsec_01",
+        "s_m_m_fiboffice_01",
+        "s_m_m_fiboffice_02"
     }
     
     local weapons = {
         easy = {"WEAPON_PISTOL", "WEAPON_COMBATPISTOL"},
-        medium = {"WEAPON_COMBATPISTOL", "WEAPON_SMG"},
-        hard = {"WEAPON_CARBINERIFLE", "WEAPON_PUMPSHOTGUN", "WEAPON_SMG"}
+        medium = {"WEAPON_COMBATPISTOL", "WEAPON_APPISTOL", "WEAPON_SMG"},
+        hard = {"WEAPON_CARBINERIFLE", "WEAPON_SPECIALCARBINE", "WEAPON_PUMPSHOTGUN"}
     }
     
-    -- Positions précises des gardes en vector4 (x, y, z, heading)
+    -- Définir les positions des gardes (vector4 avec x, y, z, heading)
     local guardPositions = {
-        vector4(256.05, 227.35, 101.68, 244.18),
-        vector4(263.19, 221.8, 101.68, 350.75),
-        vector4(257.49, 224.17, 101.88, 300.81)
+        vector4(232.68, 237.84, 97.16, 194.28),
+        vector4(230.79, 216.49, 97.16, 271.19)
     }
     
     local numGuards = 0
@@ -67,18 +103,13 @@ local function SpawnBankGuards(difficulty)
     if difficulty == "easy" then
         numGuards = 2
         selectedWeapons = weapons.easy
-        guardIndices = {1, 2}
-        QBCore.Functions.Notify("Des gardes de sécurité sont arrivés!", "inform")
+        guardIndices = {1}
+        QBCore.Functions.Notify("Des gardes de sécurité sont arrivés!", "error")
     elseif difficulty == "medium" then
         numGuards = 3
         selectedWeapons = weapons.medium
-        guardIndices = {1, 3, 5}
-        QBCore.Functions.Notify("Des agents de sécurité armés sont arrivés!", "inform")
-    else -- hard
-        numGuards = 4
-        selectedWeapons = weapons.hard
-        guardIndices = {1, 2, 3, 4}
-        QBCore.Functions.Notify("Une équipe d'intervention lourdement armée est arrivée!", "error")
+        guardIndices = {2}
+        QBCore.Functions.Notify("Des agents de sécurité armés sont arrivés!", "error")
     end
     
     for _, index in ipairs(guardIndices) do
@@ -178,11 +209,12 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                             disableMouse = false,
                             disableCombat = true,
                         }, {}, {}, {}, function() -- Done
-                            TriggerServerEvent('pn-bankrobbery:server:removeElectronicKit')
+                            
                             StopAnimTask(ped, "anim@gangops@facility@servers@", "hotwire", 1.0)
                             --local success = exports['qb-minigames']:Hacking(5, 30) -- code block size & seconds to solve
                             local success = exports['glitch-minigames']:StartDataCrack(3)
                             if success then
+                                TriggerServerEvent('pn-bankrobbery:server:removeElectronicKit')
                                 TriggerServerEvent('pn-bankrobbery:server:setBankState', 'pacific')
                             end
                             if copsCalled or not Config.BigBanks["pacific"]["alarm"] then return end

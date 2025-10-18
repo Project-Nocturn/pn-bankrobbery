@@ -237,11 +237,11 @@ RegisterNetEvent('pn-bankrobbery:server:recieveItem', function(type, bankId, loc
                     local itemAmount = math.random(maxAmount)
                     exports['qb-inventory']:AddItem(src, item.item, itemAmount, false, false, 'pn-bankrobbery:server:recieveItem')
                 elseif Config.RewardTypes[itemType].type == 'money' then
-                    local cashAmount = math.random(250, 350)
+                    local cashAmount = math.random(2500, 10000)
                     Player.Functions.AddMoney('cash', cashAmount, 'bank-robbery-locker')
                 end
             else
-                local cashAmount = math.random(250, 350)
+                local cashAmount = math.random(2500, 10000)
                 Player.Functions.AddMoney('cash', cashAmount, 'bank-robbery-locker')
                 info = {
                     crypto = math.random(1, 3)

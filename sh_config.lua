@@ -469,14 +469,14 @@ Config.BigBanks = {
     ["pacific"] = {
         ["label"] = "Pacific Standard",
         ["coords"] = {
-            [1] = vector3(261.95, 223.11, 106.28),
-            [2] = vector3(253.25, 228.44, 101.68)
+            [1] = vector3(277.76, 232.79, 98.47),
+            [2] = vector3(234.72, 221.29, 97.23)
         },
         ["alarm"] = true,
         ["object"] = 961976194,
         ["heading"] = {
-            closed = 160.00001,
-            open = 70.00001
+            closed = 115.00001,
+            open = 50.00001
         },
         ["thermite"] = {
             [1] = {
@@ -493,53 +493,55 @@ Config.BigBanks = {
         ["camId"] = 26,
         ["isOpened"] = false,
         ["lockers"] = {
+            -- Etape 1
             [1] = {
-                ["coords"] = vector3(258.57, 218.36, 101.68),
+                ["coords"] = vector3(277.23, 218.17, 98.47),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [2] = {
-                ["coords"] = vector3(260.82, 217.62, 101.68),
+                ["coords"] = vector3(264.48, 247.68, 98.47),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [3] = {
-                ["coords"] = vector3(259.33, 213.76, 101.68),
+                ["coords"] = vector3(248.96, 240.86, 98.46),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [4] = {
-                ["coords"] = vector3(257.09, 214.55, 101.68),
+                ["coords"] = vector3(262.27, 211.52, 98.46),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
+            -- Etape 2 
             [5] = {
-                ["coords"] = vector3(263.7, 216.48, 101.68),
+                ["coords"] = vector3(230.78, 203.1, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [6] = {
-                ["coords"] = vector3(265.81, 215.81, 101.68),
+                ["coords"] = vector3(226.21, 205.88, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [7] = {
-                ["coords"] = vector3(266.43, 214.37, 101.68),
+                ["coords"] = vector3(222.76, 209.74, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [8] = {
-                ["coords"] = vector3(265.71, 212.49, 101.68),
+                ["coords"] = vector3(220.58, 216.6, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [9] = {
-                ["coords"] = vector3(264.24, 211.92, 101.68),
+                ["coords"] = vector3(220.71, 221.75, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             },
             [10] = {
-                ["coords"] = vector3(262.21, 212.67, 101.68),
+                ["coords"] = vector3(221.29, 224.44, 97.15),
                 ["isBusy"] = false,
                 ["isOpened"] = false
             }

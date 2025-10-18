@@ -114,27 +114,27 @@ CreateThread(function()
         maxZ = Config.BigBanks["paleto"]["thermite"][1]["coords"].z + 1,
         debugPoly = false
     })
-    thermite1Zone:onPlayerInOut(function(inside)
-        if inside and not Config.BigBanks["paleto"]["thermite"][1]["isOpened"] then
-            currentThermiteGate = Config.BigBanks["paleto"]["thermite"][1]["doorId"]
-            -- Remplace ShowRequiredItems par un texte 3D
-            CreateThread(function()
-                while currentThermiteGate == Config.BigBanks["paleto"]["thermite"][1]["doorId"] do
-                    local pos = GetEntityCoords(PlayerPedId())
-                    local doorPos = Config.BigBanks["paleto"]["thermite"][1]["coords"]
-                    local dist = #(pos - doorPos)
-                    if dist < 10.0 then
-                        DrawText3D(doorPos.x, doorPos.y, doorPos.z + 0.5, "~y~Thermite~w~ requise")
-                    end
-                    Wait(0)
-                end
-            end)
-        else
-            if currentThermiteGate == Config.BigBanks["paleto"]["thermite"][1]["doorId"] then
-                currentThermiteGate = 0
-            end
-        end
-    end)
+    -- thermite1Zone:onPlayerInOut(function(inside)
+    --     if inside and not Config.BigBanks["paleto"]["thermite"][1]["isOpened"] then
+    --         currentThermiteGate = Config.BigBanks["paleto"]["thermite"][1]["doorId"]
+    --         -- Remplace ShowRequiredItems par un texte 3D
+    --         CreateThread(function()
+    --             while currentThermiteGate == Config.BigBanks["paleto"]["thermite"][1]["doorId"] do
+    --                 local pos = GetEntityCoords(PlayerPedId())
+    --                 local doorPos = Config.BigBanks["paleto"]["thermite"][1]["coords"]
+    --                 local dist = #(pos - doorPos)
+    --                 if dist < 10.0 then
+    --                     DrawText3D(doorPos.x, doorPos.y, doorPos.z + 0.5, "~y~Thermite~w~ requise")
+    --                 end
+    --                 Wait(0)
+    --             end
+    --         end)
+    --     else
+    --         if currentThermiteGate == Config.BigBanks["paleto"]["thermite"][1]["doorId"] then
+    --             currentThermiteGate = 0
+    --         end
+    --     end
+    -- end)
     for k in pairs(Config.BigBanks["paleto"]["lockers"]) do
         if Config.UseTarget then
             exports['qb-target']:AddBoxZone('paleto_coords_locker_'..k, Config.BigBanks["paleto"]["lockers"][k]["coords"], 1.0, 1.0, {

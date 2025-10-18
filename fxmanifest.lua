@@ -9,8 +9,6 @@ game 'gta5'
 lua54 'yes'
 use_fxv2_oal 'yes'
 
-ui_page 'html/index.html'
-
 shared_scripts {
     'sh_config.lua', -- Shared config
     '@qb-core/shared/locale.lua',
@@ -34,8 +32,9 @@ server_scripts {
     'server/main.lua'
 }
 
-files {
-    'html/*',
-}
 
-dependency 'PolyZone'
+dependencies {
+    'PolyZone',
+    'glitch-minigames',
+    'qb-doorlock'
+}
